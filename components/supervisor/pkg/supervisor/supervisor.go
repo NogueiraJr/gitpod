@@ -41,7 +41,8 @@ type runOptions struct {
 	Args                   []string
 	AdditionalServices     []RegisterableService
 	HealthEndpointGRPCOpts []grpc.ServerOption
-	WithoutTeardownCanary  bool
+
+	InNamespace bool
 }
 
 // RunOption customizes the run behaviour
@@ -68,10 +69,10 @@ func WithHealthEndpointGRPCOpt(opt grpc.ServerOption) RunOption {
 	}
 }
 
-// WithoutTeardownCanary prevents supervisor from triggering the teardown canary
-func WithoutTeardownCanary() RunOption {
+// InNamespace pivots to a root filesystem
+func InNamespace() RunOption {
 	return func(ro *runOptions) {
-		ro.WithoutTeardownCanary = true
+		ro.InNamespace = true
 	}
 }
 
@@ -164,7 +165,7 @@ func Run(options ...RunOption) {
 	}
 
 	log.Info("received SIGTERM - tearing down")
-	teardown(!opts.WithoutTeardownCanary)
+	teardown(!opts.InNamespace)
 
 	cancel()
 	wg.Wait()
