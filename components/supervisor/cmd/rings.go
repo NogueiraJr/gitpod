@@ -110,7 +110,7 @@ var ring1Cmd = &cobra.Command{
 			sleepForDebugging()
 		}()
 
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
 
 		client, conn, err := supervisor.ConnectToInWorkspaceDaemonService(ctx)
@@ -196,6 +196,8 @@ var ring1Cmd = &cobra.Command{
 				return
 			}
 		}
+
+		time.Sleep(1 * time.Second)
 
 		cmd := exec.Command("/proc/self/exe", "ring2")
 		cmd.SysProcAttr = &syscall.SysProcAttr{
